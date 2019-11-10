@@ -10,6 +10,13 @@ import (
 	"github.com/rafaeljusto/redigomock"
 )
 
+func TestNewLimiter(t *testing.T) {
+	_, err := NewLimiter("localhost:9999", "zkey", 10)
+	if err == nil {
+		t.Fatal("Expected error, got nil")
+	}
+}
+
 func TestLimiter_Init(t *testing.T) {
 	conn := redigomock.NewConn()
 	p := &redis.Pool{
