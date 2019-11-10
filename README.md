@@ -31,12 +31,17 @@ for event := range events {
 
 ## Testing
 
-Run unit tests:
+Run all tests:
+```sh
+./run_tests.sh
+```
+
+Only unit tests:
 ```sh
 go test
 ```
 
-Run integration tests (uses docker):
+Only integration tests (uses docker):
 ```sh
-./integration_test
+go test -tags=integration -run Integration
 ```

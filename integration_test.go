@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func TestLimiter(t *testing.T) {
+func TestLimiterIntegration(t *testing.T) {
 	rateLimit := float64(100)
 	runTime := 10 * time.Second
 
