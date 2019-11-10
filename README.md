@@ -1,5 +1,9 @@
 # Rate limiter
 
+[![CircleCI](https://circleci.com/gh/tetafro/tags.svg?style=shield)](https://circleci.com/gh/tetafro/rate)
+[![Codecov](https://codecov.io/gh/tetafro/rate/branch/master/graph/badge.svg)](https://codecov.io/gh/tetafro/rate)
+[![Go Report](https://goreportcard.com/badge/github.com/tetafro/rate)](https://goreportcard.com/report/github.com/tetafro/rate)
+
 Dead simple distributed redis-based rate limiter.
 
 Uses redis [ZSET](https://redis.io/topics/data-types#sorted-sets) structure for
