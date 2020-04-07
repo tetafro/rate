@@ -29,7 +29,7 @@ type Limiter struct {
 // NewLimiter creates new rate limiter with default redis pool settings.
 // By default limit is a number of events per second. To change window
 // time interval, change `Window` field manualy.
-func NewLimiter(addr string, redisKey string, limit float64) (*Limiter, error) {
+func NewLimiter(addr, redisKey string, limit float64) (*Limiter, error) {
 	lim := &Limiter{
 		Pool:   defaultRedisPool(addr),
 		Key:    redisKey,
