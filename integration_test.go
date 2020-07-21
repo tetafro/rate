@@ -3,12 +3,23 @@
 package rate
 
 import (
+	"context"
 	"fmt"
 	"testing"
 	"time"
+
+	tc "github.com/testcontainers/testcontainers-go"
+	"github.com/testcontainers/testcontainers-go/wait"
 )
 
 func TestLimiterIntegration(t *testing.T) {
+	ctx := context.Background()
+	redis, err := setup(ctx)
+	if err != nil {
+		t.Fatalf("Failed to setup environment: %v", err)
+	}
+	defer teardown(ctx, redis)
+
 	rateLimit := float64(100)
 	runTime := 10 * time.Second
 
@@ -16,7 +27,6 @@ func TestLimiterIntegration(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Unexpected error: %v", err)
 	}
-	lim.Log = &testLogger{}
 
 	start := time.Now()
 	var allowed, denied int
@@ -37,4 +47,20 @@ func TestLimiterIntegration(t *testing.T) {
 	fmt.Println("Results:")
 	fmt.Println("  allowed:", allowed)
 	fmt.Println("  denied:", denied)
+}
+
+func setup(ctx context.Context) (tc.Container, error) {
+	req := tc.ContainerRequest{
+		Image:        "redis:3.2",
+		ExposedPorts: []string{"6379/tcp"},
+		WaitingFor:   wait.ForListeningPort("6379/tcp"),
+	}
+	return tc.GenericContainer(ctx, tc.GenericContainerRequest{
+		ContainerRequest: req,
+		Started:          true,
+	})
+}
+
+func teardown(ctx context.Context, c tc.Container) {
+	c.Terminate(ctx)
 }

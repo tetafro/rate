@@ -32,20 +32,3 @@ for event := range events {
     doSomething() // allowed
 }
 ```
-
-## Testing
-
-Run all tests:
-```sh
-./run_tests.sh
-```
-
-Only unit tests:
-```sh
-go test
-```
-
-Only integration tests (uses docker):
-```sh
-go test -tags=integration -run Integration
-```
