@@ -12,3 +12,7 @@ test-integration:
 test-coverage:
 	go test -coverprofile=./profile.out -covermode=atomic
 	go tool cover -html=./profile.out
+
+.PHONY: lint
+lint:
+	golangci-lint run

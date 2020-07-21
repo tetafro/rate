@@ -1,3 +1,4 @@
+// Package rate provides distributed redis-based rate limiter.
 package rate
 
 import (
@@ -28,7 +29,7 @@ type Limiter struct {
 
 // NewLimiter creates new rate limiter with default redis pool settings.
 // By default limit is a number of events per second. To change window
-// time interval, change `Window` field manualy.
+// time interval, change `Window` field manually.
 func NewLimiter(addr, redisKey string, limit float64) (*Limiter, error) {
 	lim := &Limiter{
 		Pool:   defaultRedisPool(addr),
@@ -46,7 +47,7 @@ func NewLimiter(addr, redisKey string, limit float64) (*Limiter, error) {
 // Init loads script for calculating bucket size to redis.
 func (lim *Limiter) Init() error {
 	conn := lim.Pool.Get()
-	defer conn.Close()
+	defer conn.Close() // nolint: errcheck
 
 	digest, err := redis.String(conn.Do("SCRIPT", "LOAD", script))
 	if err != nil {
@@ -59,7 +60,7 @@ func (lim *Limiter) Init() error {
 // Allow checks whether event is allowed to happen.
 func (lim *Limiter) Allow() bool {
 	conn := lim.Pool.Get()
-	defer conn.Close()
+	defer conn.Close() // nolint: errcheck
 
 	now := time.Now().UnixNano()
 	allow, err := redis.Bool(conn.Do(
@@ -101,7 +102,7 @@ func defaultLogger() *log.Logger {
 	return log.New(os.Stderr, "", log.LstdFlags)
 }
 
-// Lua script that makes main allow/deny descision. It uses redis ZSET
+// Lua script that makes main allow/deny decision. It uses redis ZSET
 // structure for storing list of events that happened. On each call it
 // removes events older than window interval. If limit is not reached,
 // than new event is added, and script returns true. Otherwise event
