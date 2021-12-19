@@ -1,3 +1,4 @@
+//go:build integration
 // +build integration
 
 package rate
@@ -12,18 +13,21 @@ import (
 	"github.com/testcontainers/testcontainers-go/wait"
 )
 
+const testRedisVersion = "3.2"
+
 func TestLimiterIntegration(t *testing.T) {
 	ctx := context.Background()
-	redis, err := setup(ctx)
+
+	redisAddr, teardown, err := newTestRedis(ctx)
 	if err != nil {
-		t.Fatalf("Failed to setup environment: %v", err)
+		t.Fatalf("Failed to init redis: %v", err)
 	}
-	defer teardown(ctx, redis)
+	defer teardown(ctx)
 
 	rateLimit := float64(100)
 	runTime := 10 * time.Second
 
-	lim, err := NewLimiter("localhost:6379", "zkey", rateLimit)
+	lim, err := NewLimiter(redisAddr, "zkey", rateLimit)
 	if err != nil {
 		t.Fatalf("Unexpected error: %v", err)
 	}
@@ -49,18 +53,29 @@ func TestLimiterIntegration(t *testing.T) {
 	fmt.Println("  denied:", denied)
 }
 
-func setup(ctx context.Context) (tc.Container, error) {
+func newTestRedis(ctx context.Context) (string, func(context.Context) error, error) {
 	req := tc.ContainerRequest{
-		Image:        "redis:3.2",
+		Image:        "redis:" + testRedisVersion,
 		ExposedPorts: []string{"6379/tcp"},
 		WaitingFor:   wait.ForListeningPort("6379/tcp"),
 	}
-	return tc.GenericContainer(ctx, tc.GenericContainerRequest{
+	redis, err := tc.GenericContainer(ctx, tc.GenericContainerRequest{
 		ContainerRequest: req,
 		Started:          true,
 	})
-}
+	if err != nil {
+		return "", nil, fmt.Errorf("setup environment: %v", err)
+	}
 
-func teardown(ctx context.Context, c tc.Container) {
-	c.Terminate(ctx)
+	host, err := redis.Host(ctx)
+	if err != nil {
+		return "", nil, fmt.Errorf("get redis ip: %v", err)
+	}
+	mport, err := redis.MappedPort(ctx, "6379")
+	if err != nil {
+		return "", nil, fmt.Errorf("get redis port: %v", err)
+	}
+	addr := fmt.Sprintf("%s:%s", host, mport.Port())
+
+	return addr, redis.Terminate, nil
 }
