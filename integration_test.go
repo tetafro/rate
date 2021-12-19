@@ -13,7 +13,7 @@ import (
 	"github.com/testcontainers/testcontainers-go/wait"
 )
 
-const testRedisVersion = "3.2"
+const testRedisVersion = "6.2"
 
 func TestLimiterIntegration(t *testing.T) {
 	ctx := context.Background()
