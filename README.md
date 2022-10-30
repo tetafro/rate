@@ -1,6 +1,6 @@
 # Rate limiter
 
-[![CircleCI](https://circleci.com/gh/tetafro/tags.svg?style=shield)](https://circleci.com/gh/tetafro/rate)
+[![CI](https://github.com/tetafro/rate/actions/workflows/push.yml/badge.svg)](https://github.com/tetafro/rate/actions)
 [![Codecov](https://codecov.io/gh/tetafro/rate/branch/master/graph/badge.svg)](https://codecov.io/gh/tetafro/rate)
 [![Go Report](https://goreportcard.com/badge/github.com/tetafro/rate)](https://goreportcard.com/report/github.com/tetafro/rate)
 
