@@ -4,7 +4,8 @@ dep:
 
 .PHONY: test
 test:
-	go test -tags=integration \
+	go test -race \
+		-tags=integration \
 		-coverprofile=./profile.out \
 		-covermode=atomic
 
